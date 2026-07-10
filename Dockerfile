@@ -17,7 +17,7 @@ COPY . .
 
 # Pre-warm ChromaDB's default ONNX embedding model at build time so the first
 # real request isn't slowed down by a model download on a cold container.
-RUN python -c "from chromadb.utils import embedding_functions; embedding_functions.DefaultEmbeddingFunction()()(['warmup'])"
+RUN python -c "from chromadb.utils import embedding_functions; ef = embedding_functions.DefaultEmbeddingFunction(); ef(['warmup'])"
 
 # Render (and most PaaS) inject $PORT. Default to 8000 for local `docker run`.
 ENV PORT=8000
