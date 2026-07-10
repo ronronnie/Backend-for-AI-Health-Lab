@@ -1,0 +1,18 @@
+# Render Blueprint. In the Render dashboard: New > Blueprint, point it at this
+# repo, and it will create the service below. You still set ANTHROPIC_API_KEY
+# and CORS_ORIGINS as secret env vars (sync: false means Render prompts you).
+services:
+  - type: web
+    name: parentcare-backend
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: RATE_LIMIT_MAX
+        value: "10"
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: "3600"

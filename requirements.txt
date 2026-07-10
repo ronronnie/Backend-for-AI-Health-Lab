@@ -1,0 +1,8 @@
+# Pinned for reproducible deploys.
+# chromadb is pinned exactly so the on-disk corpus in rag/chroma_db/ loads
+# with the same storage format it was built with.
+fastapi==0.128.8
+uvicorn[standard]==0.39.0
+python-multipart==0.0.20
+anthropic==0.103.1
+chromadb==1.5.9
