@@ -413,7 +413,9 @@ def parse_report(file_path: str) -> dict:
     client = anthropic.Anthropic(api_key=API_KEY)
     response = client.messages.create(
         model=MODEL_NAME,
-        max_tokens=8192,
+        # Large lab panels can produce long JSON; 8192 truncated real reports
+        # mid-string. Haiku 4.5 supports well beyond this, so give ample room.
+        max_tokens=16000,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": content_blocks}],
     )
@@ -424,6 +426,14 @@ def parse_report(file_path: str) -> dict:
     # Haiku 4.5: ~$1/M input, ~$5/M output (approximate)
     est_cost_usd = (usage.input_tokens * 1.0 + usage.output_tokens * 5.0) / 1_000_000
     print(f"  Estimated cost: ${est_cost_usd:.4f}  (~Rs {est_cost_usd * 85:.2f})")
+
+    # If the model still ran out of room, the JSON is incomplete — fail with a
+    # clear message instead of a cryptic "Unterminated string" from json.loads.
+    if response.stop_reason == "max_tokens":
+        raise RuntimeError(
+            "The report is too large to parse in one pass (model output hit the "
+            "token limit). Try uploading a single panel or a clearer photo."
+        )
 
     text = response.content[0].text
     return extract_json(text)
