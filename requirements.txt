@@ -6,3 +6,5 @@ uvicorn[standard]==0.39.0
 python-multipart==0.0.20
 anthropic==0.103.1
 chromadb==1.5.9
+# PDF text extraction used by lab_parser.py (imported lazily on the PDF path)
+pdfplumber==0.11.8
